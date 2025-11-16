@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using TodoApp.Application.Security;
 using TodoApp.Data;
 using TodoApp.Domain;
 using TodoApp.Utils;
@@ -9,10 +10,12 @@ namespace TodoApp.Application.Features.Users.Register
     internal class RegisterUserHandler : IRequestHandler<RegisterUserRequest, AuthUserResponse>
     {
         private readonly AppDbContext _dbContext;
+        private readonly JwtProvider _jwtProvider;
         public RegisterUserHandler(AppDbContext dbContext,
-            Hashing hashingService)
+            Hashing hashingService, JwtProvider jwtProvider)
         {
             _dbContext = dbContext;
+            _jwtProvider = jwtProvider;
         }
         public async Task<AuthUserResponse> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
         {
@@ -41,6 +44,8 @@ namespace TodoApp.Application.Features.Users.Register
                     IsActiveUser = true,
                 };
 
+                var token = _jwtProvider.GenerateToken(userEntity.Id.ToString(), userEntity.Username);
+
                 await _dbContext.users.AddAsync(userEntity, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -48,7 +53,8 @@ namespace TodoApp.Application.Features.Users.Register
                 {
                     Status = 201,
                     Message = StatusMessages.User.SuccessfullyRegistered,
-                    TrackId = Guid.NewGuid()
+                    TrackId = Guid.NewGuid(),
+                    Token = token
                 };
             }
             catch (Exception ex)

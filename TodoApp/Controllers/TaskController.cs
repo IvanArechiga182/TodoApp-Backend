@@ -40,7 +40,6 @@ namespace TodoApp.Controllers
                 Description = request.Description,
                 Priority = request.Priority,
                 CreatedAt = request.CreatedAt,
-                UpdatedAt = request.UpdatedAt,
                 DueAt = request.DueAt,
             });
             return StatusCode(result.Status, result);

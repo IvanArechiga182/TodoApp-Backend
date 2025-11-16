@@ -19,13 +19,11 @@ internal class Program
 
         var app = builder.Build();
 
-        configureApp(app);
-
+        app.UseCors("FrontendPolicy");
         app.UseHttpsRedirection();
-
         app.UseAuthorization();
-
         app.MapControllers();
+        configureApp(app);
         app.Run();
     }
 
@@ -49,6 +47,22 @@ internal class Program
 
     private static void configureServices(WebApplicationBuilder builder, string connectionString)
     {
+        var frontendUrl = builder.Environment.IsDevelopment()
+            ? "http://localhost:4200"
+            : builder.Configuration["Frontend:Url"];
+
+        builder.Services.AddCors(options =>
+        {
+            var allowedOrigins = new[] { frontendUrl, "https://localhost:4200/" };
+
+            options.AddPolicy("FrontendPolicy", policy =>
+            {
+                policy.WithOrigins(allowedOrigins)
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials();
+            });
+        });
         builder.Services.AddControllers().AddJsonOptions(
             opt =>
             {

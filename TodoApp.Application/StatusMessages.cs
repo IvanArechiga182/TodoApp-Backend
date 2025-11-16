@@ -20,8 +20,9 @@
             public const string SuccessfullyRegistered = "User was successfully registered";
             public const string NotFound = "User not found.";
             public const string NotRegistered = "User information not valid for register.";
-            public const string UserExists = "Username or email is already in use."
+            public const string UserExists = "Username or email is already in use.";
             public const string Unauthorized = "You are not authorized to perform this action.";
+            public const string InvalidCredentials = "Username or password are wrong.";
         }
     }
 }

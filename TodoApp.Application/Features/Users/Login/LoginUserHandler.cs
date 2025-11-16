@@ -24,17 +24,27 @@ namespace TodoApp.Application.Features.Users.Login
                 var user = await _dbContext.users
                 .FirstOrDefaultAsync(u => u.Username == request.Username);
                 
-                if (user == null || !Hashing.VerifyPassword(request.Password, user.Password))
+                if (user == null)
                 {
                     return new AuthUserResponse
                     {
                         Status = 401,
-                        Message = StatusMessages.User.Unauthorized,
+                        Message = StatusMessages.User.NotFound,
                         TrackId = Guid.NewGuid(),
                     };
                 }
 
-                var token = _jwtProvider.GenerateToken(user.Id.ToString(), user.Username);
+                if(user != null && !Hashing.VerifyPassword(request.Password, user.Password))
+                {
+                    return new AuthUserResponse
+                    {
+                        Status = 401,
+                        Message = StatusMessages.User.InvalidCredentials,
+                        TrackId = Guid.NewGuid(),
+                    };
+                }
+
+                var token = _jwtProvider.GenerateToken(user!.Id.ToString(), user.Username);
 
                 return new AuthUserResponse
                 {

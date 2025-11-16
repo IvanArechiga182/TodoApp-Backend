@@ -15,14 +15,14 @@ namespace TodoApp.Application.Features.Tasks.AddNewTask
         {
             try
             {
+                var taskCreatedDate = DateTime.UtcNow;
                 var taskEntity = new TaskEntity
                 {
                     Title = request.Title,
                     UserId = request.UserId,
                     Description = request.Description,
-                    CreatedAt = request.CreatedAt,
+                    CreatedAt = taskCreatedDate,
                     Priority = request.Priority,
-                    UpdatedAt = request.UpdatedAt,
                     DueAt = request.DueAt,
                 };
 
@@ -34,6 +34,7 @@ namespace TodoApp.Application.Features.Tasks.AddNewTask
                     Status = 200,
                     Message = $"Task '{taskEntity.Title}' has been created successfully.",
                     TrackId = Guid.NewGuid(),
+                    TasksList = new List<TaskEntity> { taskEntity }
                 };
             }
             catch (Exception ex) 

@@ -8,6 +8,7 @@ namespace TodoApp.Application.Features.Tasks.AddNewTask
     public class AddNewTaskRequest : IRequest<TaskOperationResponse>
     {
         [Required]
+        [JsonIgnore]
         [JsonPropertyName("userId")]
         public int UserId { get; set; }
 
@@ -26,12 +27,12 @@ namespace TodoApp.Application.Features.Tasks.AddNewTask
         [JsonPropertyName("priority")]
         public Priority Priority {  get; set; }
 
-        [Required]
         [JsonPropertyName("createdAt")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
-        [JsonPropertyName("updatedAt")]
-        public DateTime? UpdatedAt { get; set; }
+        //[JsonPropertyName("updatedAt")]
+        //[JsonIgnore]
+        //public DateTime? UpdatedAt { get; set; }
 
         [Required]
         [JsonPropertyName("dueAt")]
